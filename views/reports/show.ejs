@@ -1,0 +1,71 @@
+<%- include('../partials/header', { title }) %>
+<div class="page-head no-print">
+  <a class="btn" href="<%= user.role === 'admin' && report.user_id !== user.id ? '/admin/rapports' : '/rapports' %>">← Retour</a>
+  <div class="actions">
+    <button type="button" class="btn" data-print>Imprimer / PDF</button>
+    <% if (editable) { %><a class="btn btn-primary" href="/rapports/<%= report.id %>/modifier">Modifier</a><% } %>
+  </div>
+</div>
+
+<article class="card report" <% if (justSaved) { %>data-clear-autosave="<%= 'rapport-nouveau' %>,rapport-<%= report.id %>"<% } %>>
+  <header class="report-header">
+    <div>
+      <h1>Rapport d'intervention n°<%= report.id %></h1>
+      <p class="muted">Technicien : <strong><%= report.technician_name %></strong></p>
+    </div>
+    <span class="badge badge-<%= report.status %>"><%= statusLabel(report.status) %></span>
+  </header>
+
+  <dl class="details">
+    <div><dt>Date</dt><dd><%= fmtDate(report.intervention_date) %></dd></div>
+    <div><dt>Horaires</dt><dd><%= report.start_time || '—' %> → <%= report.end_time || '—' %></dd></div>
+    <div><dt>Client</dt><dd><%= report.client %></dd></div>
+    <div><dt>Site / adresse</dt><dd><%= report.site || '—' %></dd></div>
+    <div><dt>Type</dt><dd><%= report.intervention_type || '—' %></dd></div>
+    <% if (report.submitted_at) { %><div><dt>Soumis le</dt><dd><%= fmtDateTime(report.submitted_at) %></dd></div><% } %>
+  </dl>
+
+  <h2>Travaux réalisés</h2>
+  <p class="pre"><%= report.description || '—' %></p>
+
+  <h2>Matériel / pièces utilisées</h2>
+  <p class="pre"><%= report.materials || '—' %></p>
+
+  <h2>Observations / suites à donner</h2>
+  <p class="pre"><%= report.observations || '—' %></p>
+
+  <% if (photos.length) { %>
+    <h2>Photos (<%= photos.length %>)</h2>
+    <div class="photo-grid">
+      <% photos.forEach((p) => { %>
+        <a class="photo" href="/photos/<%= p.id %>" target="_blank" rel="noopener"><img src="/photos/<%= p.id %>" alt="<%= p.original_name || 'Photo' %>" loading="lazy"></a>
+      <% }) %>
+    </div>
+  <% } %>
+
+  <h2>Signature du client</h2>
+  <% if (report.signature) { %>
+    <figure class="signature">
+      <img src="<%= report.signature %>" alt="Signature de <%= report.signer_name || 'client' %>">
+      <figcaption><%= report.signer_name %></figcaption>
+    </figure>
+  <% } else { %>
+    <p class="muted">Non signé.</p>
+  <% } %>
+</article>
+
+<div class="no-print">
+<% if (editable) { %>
+  <form method="post" action="/rapports/<%= report.id %>/supprimer" data-confirm="Supprimer définitivement ce brouillon ?">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit" class="btn btn-block btn-danger-outline">Supprimer le brouillon</button>
+  </form>
+<% } %>
+<% if (user.role === 'admin' && report.status === 'soumis') { %>
+  <form method="post" action="/admin/rapports/<%= report.id %>/rouvrir" data-confirm="Rouvrir ce rapport pour que le technicien puisse le modifier ?">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <button type="submit" class="btn btn-block">Rouvrir le rapport (repasser en brouillon)</button>
+  </form>
+<% } %>
+</div>
+<%- include('../partials/footer') %>

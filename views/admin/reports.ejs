@@ -1,0 +1,66 @@
+<%- include('../partials/header', { title }) %>
+<div class="page-head">
+  <h1>Tous les rapports</h1>
+  <a class="btn" href="/admin/rapports.csv<%= exportQuery ? '?' + exportQuery : '' %>">Exporter (CSV)</a>
+</div>
+
+<details class="card filters" <%= exportQuery ? 'open' : '' %>>
+  <summary>Filtres<%= exportQuery ? ' (actifs)' : '' %></summary>
+  <form method="get" action="/admin/rapports">
+    <div class="grid-2">
+      <div>
+        <label for="technicien">Technicien</label>
+        <select id="technicien" name="technicien">
+          <option value="">Tous</option>
+          <% technicians.forEach((t) => { %>
+            <option value="<%= t.id %>" <%= filters.technicien === t.id ? 'selected' : '' %>><%= t.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="statut">Statut</label>
+        <select id="statut" name="statut">
+          <option value="">Tous</option>
+          <option value="soumis" <%= filters.statut === 'soumis' ? 'selected' : '' %>>Soumis</option>
+          <option value="brouillon" <%= filters.statut === 'brouillon' ? 'selected' : '' %>>Brouillon</option>
+        </select>
+      </div>
+      <div>
+        <label for="du">Du</label>
+        <input id="du" name="du" type="date" value="<%= filters.du %>">
+      </div>
+      <div>
+        <label for="au">Au</label>
+        <input id="au" name="au" type="date" value="<%= filters.au %>">
+      </div>
+    </div>
+    <label for="q">Recherche (client, site, description)</label>
+    <input id="q" name="q" type="search" value="<%= filters.q %>">
+    <div class="form-actions">
+      <a class="btn btn-block" href="/admin/rapports">Réinitialiser</a>
+      <button class="btn btn-primary btn-block" type="submit">Filtrer</button>
+    </div>
+  </form>
+</details>
+
+<p class="muted"><%= reports.length %> rapport<%= reports.length > 1 ? 's' : '' %></p>
+
+<% if (reports.length) { %>
+  <ul class="report-list">
+  <% reports.forEach((r) => { %>
+    <li>
+      <a href="/rapports/<%= r.id %>" class="report-item">
+        <div class="report-item-main">
+          <strong><%= r.client %></strong>
+          <span class="muted"><%= r.technician_name %> · <%= r.intervention_type || 'Intervention' %><%= r.site ? ' · ' + r.site : '' %></span>
+        </div>
+        <div class="report-item-meta">
+          <span><%= fmtDate(r.intervention_date) %></span>
+          <span class="badge badge-<%= r.status %>"><%= statusLabel(r.status) %></span>
+        </div>
+      </a>
+    </li>
+  <% }) %>
+  </ul>
+<% } %>
+<%- include('../partials/footer') %>

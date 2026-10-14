@@ -1,0 +1,23 @@
+<%- include('../partials/header', { title }) %>
+<div class="page-head">
+  <h1>Utilisateurs</h1>
+  <a class="btn btn-primary" href="/admin/utilisateurs/nouveau">+ Créer un compte</a>
+</div>
+
+<ul class="report-list">
+<% users.forEach((u) => { %>
+  <li>
+    <a href="/admin/utilisateurs/<%= u.id %>" class="report-item <%= u.active ? '' : 'inactive' %>">
+      <div class="report-item-main">
+        <strong><%= u.name %></strong>
+        <span class="muted"><%= u.email %></span>
+      </div>
+      <div class="report-item-meta">
+        <span class="badge <%= u.role === 'admin' ? 'badge-admin' : '' %>"><%= u.role === 'admin' ? 'Admin' : 'Technicien' %></span>
+        <span class="small muted"><%= u.active ? u.report_count + ' rapport' + (u.report_count > 1 ? 's' : '') : 'Désactivé' %></span>
+      </div>
+    </a>
+  </li>
+<% }) %>
+</ul>
+<%- include('../partials/footer') %>

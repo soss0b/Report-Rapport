@@ -1,0 +1,18 @@
+<%- include('partials/header', { title }) %>
+<section class="login">
+  <div class="login-logo">
+    <img src="/icons/icon.svg" alt="" width="72" height="72">
+    <h1>Rapports d'intervention</h1>
+    <p class="muted">Connectez-vous pour saisir vos rapports.</p>
+  </div>
+  <form method="post" action="/login" class="card">
+    <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+    <label for="email">Adresse email</label>
+    <input id="email" name="email" type="email" autocomplete="username" inputmode="email" required value="<%= email %>" autofocus>
+    <label for="password">Mot de passe</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+    <p class="muted small">Pas de compte ? Demandez à votre administrateur.</p>
+  </form>
+</section>
+<%- include('partials/footer') %>

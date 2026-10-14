@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1d4ed8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Rapports">
+  <title><%= title %> · Rapports techniciens</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+<% if (user) { %>
+<header class="topbar">
+  <a class="brand" href="/">
+    <img src="/icons/icon.svg" alt="" width="28" height="28">
+    <span>Rapports</span>
+  </a>
+  <nav class="nav">
+    <a href="/rapports" class="<%= currentPath.startsWith('/rapports') ? 'active' : '' %>">Mes rapports</a>
+    <% if (user.role === 'admin') { %>
+      <a href="/admin/rapports" class="<%= currentPath.startsWith('/admin/rapports') ? 'active' : '' %>">Tous les rapports</a>
+      <a href="/admin/utilisateurs" class="<%= currentPath.startsWith('/admin/utilisateurs') ? 'active' : '' %>">Utilisateurs</a>
+    <% } %>
+    <a href="/compte" class="<%= currentPath === '/compte' ? 'active' : '' %>">Mon compte</a>
+  </nav>
+</header>
+<% } %>
+<main class="container">
+<% if (flash) { %>
+  <div class="alert alert-<%= flash.type %>" role="status"><%= flash.message %></div>
+<% } %>

@@ -1,0 +1,58 @@
+<%- include('../partials/header', { title }) %>
+<%
+  const v = (k) => values[k] == null ? '' : values[k];
+  const err = (k) => errors[k] ? `<p class="field-error">${errors[k].replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</p>` : '';
+%>
+<div class="page-head">
+  <h1><%= title %></h1>
+  <a class="btn" href="/admin/utilisateurs">Retour</a>
+</div>
+
+<section class="card">
+  <form method="post" action="<%= target ? '/admin/utilisateurs/' + target.id : '/admin/utilisateurs' %>" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label for="name">Nom et prénom *</label>
+    <input id="name" name="name" required maxlength="100" value="<%= v('name') %>">
+    <%- err('name') %>
+
+    <label for="email">Adresse email (identifiant de connexion) *</label>
+    <input id="email" name="email" type="email" required maxlength="200" value="<%= v('email') %>" autocomplete="off">
+    <%- err('email') %>
+
+    <label for="role">Rôle</label>
+    <select id="role" name="role">
+      <option value="technicien" <%= v('role') === 'technicien' ? 'selected' : '' %>>Technicien</option>
+      <option value="admin" <%= v('role') === 'admin' ? 'selected' : '' %>>Administrateur</option>
+    </select>
+    <%- err('role') %>
+
+    <% if (!target) { %>
+      <label for="password">Mot de passe provisoire (8 caractères min.) *</label>
+      <input id="password" name="password" type="text" required minlength="8" autocomplete="new-password">
+      <%- err('password') %>
+      <p class="muted small">L'utilisateur pourra le changer depuis « Mon compte ».</p>
+    <% } else { %>
+      <label class="checkbox">
+        <input type="checkbox" name="active" value="1" <%= v('active') ? 'checked' : '' %>>
+        Compte actif (décocher pour bloquer l'accès)
+      </label>
+      <%- err('active') %>
+    <% } %>
+
+    <button class="btn btn-primary btn-block" type="submit"><%= target ? 'Enregistrer' : 'Créer le compte' %></button>
+  </form>
+</section>
+
+<% if (target) { %>
+<section class="card">
+  <h2>Réinitialiser le mot de passe</h2>
+  <form method="post" action="/admin/utilisateurs/<%= target.id %>/mot-de-passe">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label for="new-password">Nouveau mot de passe (8 caractères min.)</label>
+    <input id="new-password" name="password" type="text" required minlength="8" autocomplete="new-password">
+    <%- err('password') %>
+    <button class="btn btn-block" type="submit">Réinitialiser</button>
+  </form>
+</section>
+<% } %>
+<%- include('../partials/footer') %>

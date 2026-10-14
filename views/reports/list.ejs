@@ -1,0 +1,30 @@
+<%- include('../partials/header', { title }) %>
+<div class="page-head">
+  <h1>Mes rapports</h1>
+  <a class="btn btn-primary" href="/rapports/nouveau">+ Nouveau rapport</a>
+</div>
+
+<% if (!reports.length) { %>
+  <section class="card center">
+    <p>Vous n'avez encore aucun rapport.</p>
+    <a class="btn btn-primary" href="/rapports/nouveau">Créer mon premier rapport</a>
+  </section>
+<% } else { %>
+  <ul class="report-list">
+  <% reports.forEach((r) => { %>
+    <li>
+      <a href="/rapports/<%= r.id %>" class="report-item">
+        <div class="report-item-main">
+          <strong><%= r.client %></strong>
+          <span class="muted"><%= r.intervention_type || 'Intervention' %><%= r.site ? ' · ' + r.site : '' %></span>
+        </div>
+        <div class="report-item-meta">
+          <span><%= fmtDate(r.intervention_date) %></span>
+          <span class="badge badge-<%= r.status %>"><%= statusLabel(r.status) %></span>
+        </div>
+      </a>
+    </li>
+  <% }) %>
+  </ul>
+<% } %>
+<%- include('../partials/footer') %>

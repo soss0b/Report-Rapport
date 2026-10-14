@@ -1,0 +1,118 @@
+<%- include('../partials/header', { title }) %>
+<%
+  const v = (k) => values[k] == null ? '' : values[k];
+  const err = (k) => errors[k] ? `<p class="field-error">${errors[k].replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}</p>` : '';
+  const action = report ? `/rapports/${report.id}` : '/rapports';
+  const autosaveKey = report ? `rapport-${report.id}` : 'rapport-nouveau';
+%>
+<div class="page-head">
+  <h1><%= title %></h1>
+  <a class="btn" href="<%= report ? '/rapports/' + report.id : '/rapports' %>">Annuler</a>
+</div>
+
+<% if (Object.keys(errors).length) { %>
+  <div class="alert alert-error" role="alert">Le formulaire contient des erreurs, vérifiez les champs indiqués.</div>
+<% } %>
+
+<form method="post" action="<%= action %>" enctype="multipart/form-data" class="report-form" data-autosave="<%= autosaveKey %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <fieldset class="card">
+    <legend>Intervention</legend>
+    <div class="grid-3">
+      <div>
+        <label for="intervention_date">Date *</label>
+        <input id="intervention_date" name="intervention_date" type="date" required value="<%= v('intervention_date') %>">
+        <%- err('intervention_date') %>
+      </div>
+      <div>
+        <label for="start_time">Heure de début</label>
+        <input id="start_time" name="start_time" type="time" value="<%= v('start_time') %>">
+        <%- err('start_time') %>
+      </div>
+      <div>
+        <label for="end_time">Heure de fin</label>
+        <input id="end_time" name="end_time" type="time" value="<%= v('end_time') %>">
+        <%- err('end_time') %>
+      </div>
+    </div>
+
+    <label for="client">Client *</label>
+    <input id="client" name="client" required maxlength="200" value="<%= v('client') %>" autocomplete="organization">
+    <%- err('client') %>
+
+    <label for="site">Site / adresse</label>
+    <input id="site" name="site" maxlength="300" value="<%= v('site') %>" autocomplete="street-address">
+    <%- err('site') %>
+
+    <label for="intervention_type">Type d'intervention</label>
+    <select id="intervention_type" name="intervention_type">
+      <option value="">— Choisir —</option>
+      <% interventionTypes.forEach((t) => { %>
+        <option value="<%= t %>" <%= v('intervention_type') === t ? 'selected' : '' %>><%= t %></option>
+      <% }) %>
+      <% if (v('intervention_type') && !interventionTypes.includes(v('intervention_type'))) { %>
+        <option value="<%= v('intervention_type') %>" selected><%= v('intervention_type') %></option>
+      <% } %>
+    </select>
+  </fieldset>
+
+  <fieldset class="card">
+    <legend>Compte rendu</legend>
+    <label for="description">Travaux réalisés *</label>
+    <textarea id="description" name="description" rows="6" maxlength="20000" placeholder="Décrivez les travaux effectués…"><%= v('description') %></textarea>
+    <%- err('description') %>
+
+    <label for="materials">Matériel / pièces utilisées</label>
+    <textarea id="materials" name="materials" rows="3" maxlength="10000"><%= v('materials') %></textarea>
+    <%- err('materials') %>
+
+    <label for="observations">Observations / suites à donner</label>
+    <textarea id="observations" name="observations" rows="3" maxlength="10000"><%= v('observations') %></textarea>
+    <%- err('observations') %>
+  </fieldset>
+
+  <fieldset class="card">
+    <legend>Photos</legend>
+    <% if (photos.length) { %>
+      <div class="photo-grid">
+        <% photos.forEach((p) => { %>
+          <div class="photo">
+            <a href="/photos/<%= p.id %>" target="_blank" rel="noopener"><img src="/photos/<%= p.id %>" alt="<%= p.original_name || 'Photo' %>" loading="lazy"></a>
+            <button type="submit" class="btn btn-small btn-danger-outline" form="delete-photo-<%= p.id %>">Retirer</button>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+    <label for="photos" class="btn btn-block file-btn">📷 Ajouter des photos</label>
+    <input id="photos" name="photos" type="file" accept="image/*" multiple class="visually-hidden">
+    <p class="muted small" id="photos-info">10 photos max. par envoi, 10 Mo chacune.</p>
+    <div class="photo-grid" id="photos-preview"></div>
+  </fieldset>
+
+  <fieldset class="card">
+    <legend>Signature du client</legend>
+    <label for="signer_name">Nom du signataire</label>
+    <input id="signer_name" name="signer_name" maxlength="200" value="<%= v('signer_name') %>">
+    <%- err('signer_name') %>
+    <div class="signature-pad">
+      <canvas id="signature-canvas" aria-label="Zone de signature"></canvas>
+      <img id="signature-existing" alt="Signature enregistrée" <%= v('signature') ? '' : 'hidden' %> src="<%= v('signature') %>">
+    </div>
+    <input type="hidden" name="signature" id="signature" value="<%= v('signature') %>">
+    <%- err('signature') %>
+    <button type="button" class="btn btn-small" id="signature-clear">Effacer la signature</button>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit" name="action" value="save" class="btn btn-block">Enregistrer le brouillon</button>
+    <button type="submit" name="action" value="submit" class="btn btn-primary btn-block" data-confirm="Une fois soumis, le rapport ne pourra plus être modifié. Continuer ?">Soumettre le rapport</button>
+  </div>
+</form>
+
+<% photos.forEach((p) => { %>
+  <form id="delete-photo-<%= p.id %>" method="post" action="/rapports/<%= report.id %>/photos/<%= p.id %>/supprimer" data-confirm="Retirer cette photo ?" hidden>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  </form>
+<% }) %>
+<%- include('../partials/footer') %>

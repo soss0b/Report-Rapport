@@ -1,0 +1,27 @@
+<%- include('partials/header', { title }) %>
+<h1>Mon compte</h1>
+<section class="card">
+  <p><strong><%= user.name %></strong><br><span class="muted"><%= user.email %></span></p>
+  <p>Rôle : <span class="badge"><%= user.role === 'admin' ? 'Administrateur' : 'Technicien' %></span></p>
+</section>
+
+<section class="card">
+  <h2>Changer mon mot de passe</h2>
+  <% if (error) { %><div class="alert alert-error" role="alert"><%= error %></div><% } %>
+  <form method="post" action="/compte/mot-de-passe">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label for="current_password">Mot de passe actuel</label>
+    <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+    <label for="new_password">Nouveau mot de passe (8 caractères min.)</label>
+    <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="confirm_password">Confirmer le nouveau mot de passe</label>
+    <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="btn btn-primary" type="submit">Mettre à jour</button>
+  </form>
+</section>
+
+<form method="post" action="/logout">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <button class="btn btn-block btn-danger-outline" type="submit">Se déconnecter</button>
+</form>
+<%- include('partials/footer') %>
