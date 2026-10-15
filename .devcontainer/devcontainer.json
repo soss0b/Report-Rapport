@@ -1,0 +1,10 @@
+{
+  "name": "Rapports techniciens",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "npm install && cp -n .env.example .env",
+  "postAttachCommand": "npm start",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Application", "onAutoForward": "openBrowser" }
+  }
+}

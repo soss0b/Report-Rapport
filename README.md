@@ -26,6 +26,18 @@ navigateur et on peut l'**ajouter à l'écran d'accueil** pour l'utiliser comme 
   période, recherche texte) et **export CSV** (Excel).
 - Réouverture d'un rapport soumis pour correction par le technicien.
 
+## Tester sans rien installer (GitHub Codespaces)
+
+1. Sur la page GitHub du dépôt, choisir la branche `claude/app-rapports-techniciens`.
+2. Bouton vert **Code** → onglet **Codespaces** → **Create codespace on claude/app-rapports-techniciens**.
+3. Patienter 2 à 3 minutes : l'installation et le démarrage sont automatiques.
+4. Ouvrir l'onglet **Ports** en bas, puis l'icône 🌐 de la ligne 3000.
+5. Se connecter avec `admin@exemple.fr` / `admin1234`.
+
+Pour tester sur un téléphone : dans l'onglet **Ports**, clic droit sur 3000 → *Port Visibility* →
+*Public*, puis ouvrir la même adresse sur le téléphone. Penser à arrêter le codespace après usage
+(github.com/codespaces).
+
 ## Tester en local
 
 Prérequis : [Node.js](https://nodejs.org) 22.13 ou plus récent (version « LTS »), et Git.
