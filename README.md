@@ -26,23 +26,36 @@ navigateur et on peut l'**ajouter à l'écran d'accueil** pour l'utiliser comme 
   période, recherche texte) et **export CSV** (Excel).
 - Réouverture d'un rapport soumis pour correction par le technicien.
 
-## Démarrage rapide
+## Tester en local
 
-Prérequis : Node.js 22.13 ou plus récent.
+Prérequis : [Node.js](https://nodejs.org) 22.13 ou plus récent (version « LTS »), et Git.
 
 ```bash
+git clone https://github.com/soss0b/Report-Rapport.git
+cd Report-Rapport
+git checkout claude/app-rapports-techniciens
 npm install
-ADMIN_EMAIL=admin@exemple.fr ADMIN_PASSWORD='un-mot-de-passe-solide' npm start
 ```
 
-Ouvrir http://localhost:3000 et se connecter avec le compte admin. Le premier administrateur
-est créé au démarrage s'il n'en existe aucun. On peut aussi le créer avec :
+Copier `.env.example` en `.env` (Windows : `copy .env.example .env`, Mac/Linux : `cp .env.example .env`),
+puis lancer :
 
 ```bash
-npm run create-admin -- admin@exemple.fr "Nom Prénom"
+npm start
 ```
 
-Tests : `npm test`
+Ouvrir http://localhost:3000 et se connecter avec `admin@exemple.fr` / `admin1234`
+(valeurs du fichier `.env`, à changer). Le premier administrateur est créé au démarrage s'il n'en
+existe aucun. On peut aussi en créer un avec `npm run create-admin -- admin@exemple.fr "Nom Prénom"`.
+
+**Tester depuis son téléphone** : téléphone et ordinateur sur le même Wi-Fi, ouvrir
+`http://<adresse IP de l'ordinateur>:3000` (adresse IP visible avec `ipconfig` sous Windows).
+Si la page ne s'ouvre pas, autoriser Node.js dans le pare-feu Windows. L'installation sur l'écran
+d'accueil n'est possible qu'en HTTPS, donc une fois l'application en ligne.
+
+Remise à zéro : arrêter le serveur (Ctrl+C) et supprimer le dossier `data/`.
+
+Tests automatisés : `npm test`
 
 ## Mise en production
 
